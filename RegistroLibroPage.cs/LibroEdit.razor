@@ -63,7 +63,7 @@ else
     {
         if (libro == null) return;
 
-        var (exito, msg) = await libroServices.Actualizar(libro);
+        var exito = await libroServices.Guardar(libro);
 
         if (exito)
         {
@@ -71,7 +71,7 @@ else
         }
         else
         {
-            mensaje = msg;
+            mensaje = "Error al actualizar el libro.";
         }
     }
 
