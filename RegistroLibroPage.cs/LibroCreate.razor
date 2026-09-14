@@ -51,7 +51,7 @@
 
     private async Task Guardar()
     {
-        var (exito, msg) = await libroServices.Guardar(libro);
+       var exito = await libroServices.Guardar(libro);
 
         if (exito)
         {
@@ -59,7 +59,7 @@
         }
         else
         {
-            mensaje = msg;
+            mensaje = "Error al guardar el libro.";
         }
     }
 
