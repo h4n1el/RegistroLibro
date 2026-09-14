@@ -1,0 +1,70 @@
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using RegistroLibros.Services
+
+@page "/libro/create"
+@inject LibroServices libroServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Crear Libro</PageTitle>
+
+<h3>Crear Libro</h3>
+
+<EditForm Model="libro" OnValidSubmit="Guardar" FormName="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">LibroId</label>
+        <InputNumber class="form-control" @bind-Value="libro.LibroId" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Título</label>
+        <InputText class="form-control" @bind-Value="libro.Titulo" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Autor</label>
+        <InputText class="form-control" @bind-Value="libro.Autor" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Año de Publicación</label>
+        <InputNumber class="form-control" @bind-Value="libro.AnoPublicacion" />
+    </div>
+
+    <button type="submit" class="btn btn-primary"@onclick="Guardar">Guardar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <p class="text-danger mt-2">@mensaje</p>
+    }
+</EditForm>
+
+@code {
+    private Libro libro = new();
+    private string? mensaje;
+
+    private async Task Guardar()
+    {
+        var (exito, msg) = await libroServices.Guardar(libro);
+
+        if (exito)
+        {
+            navigationManager.NavigateTo("/Libro/Index");
+        }
+        else
+        {
+            mensaje = msg;
+        }
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/Libro/Index");
+    }
+}

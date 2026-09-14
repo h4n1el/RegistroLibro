@@ -1,0 +1,82 @@
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using RegistroLibros.Services
+
+@page "/Libro/Edit/{LibroId:int}"
+@inject LibroServices libroServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Editar Libro</PageTitle>
+
+<h3>Editar Libro</h3>
+
+@if (libro == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <EditForm Model="libro" OnValidSubmit="EditarLibro" FormName="Editar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Título:</label>
+            <InputText @bind-Value="libro.Titulo" class="form-control" />
+        </div>
+
+        <div>
+            <label>Autor:</label>
+            <InputText @bind-Value="libro.Autor" class="form-control" />
+        </div>
+
+        <div>
+            <label>Año de Publicación:</label>
+            <InputNumber @bind-Value="libro.AnoPublicacion" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
+        <button type="button" class="btn btn-secondary mt-3" @onclick="Cancelar">Cancelar</button>
+
+        @if (!string.IsNullOrEmpty(mensaje))
+        {
+            <p class="text-danger mt-2">@mensaje</p>
+        }
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int LibroId { get; set; }
+
+    private Libro? libro;
+    private string? mensaje;
+
+    protected override async Task OnInitializedAsync()
+    {
+        libro = await libroServices.ObtenerPorIdAsync(LibroId);
+    }
+
+    private async Task EditarLibro()
+    {
+        if (libro == null) return;
+
+        var (exito, msg) = await libroServices.Actualizar(libro);
+
+        if (exito)
+        {
+            navigationManager.NavigateTo("/Libro/Index");
+        }
+        else
+        {
+            mensaje = msg;
+        }
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/Libro/Index");
+    }
+}

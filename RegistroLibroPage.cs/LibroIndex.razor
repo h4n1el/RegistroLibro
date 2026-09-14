@@ -1,0 +1,86 @@
+@using RegistroLibros.Services
+@using RegistroLibros.DAL
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web
+
+@page "/Libro/Index"
+@inject LibroServices libroServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Libros</PageTitle>
+
+<h3>Listado de Libros</h3>
+
+
+<a href="/libro/create" class="btn btn-primary mb-3">Crear Libro</a>
+
+@if (libros == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (!libros.Any())
+{
+    <p>No hay libros registrados.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>LibroId</th>
+                <th>Titulo</th>
+                <th>Autor</th>
+                <th>Año de Publicación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var libro in libros)
+            {
+                <tr>
+                    <td>@libro.LibroId</td>
+                    <td>@libro.Titulo</td>
+                    <td>@libro.Autor</td>
+                    <td>@libro.AnoPublicacion</td>
+                    <td>
+                        <a href="@($"/libro/edit/{libro.LibroId}")" class="btn btn-warning btn-sm">Editar</a>
+                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmarEliminar(libro.LibroId)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p><strong>Cantidad: @libros.Count()</strong></p>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+{
+    <p class="text-success mt-2">@mensaje</p>
+}
+
+}
+
+
+
+@code {
+    private List<Libro>? libros;
+    private string? mensaje;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarLibros();
+    }
+
+    private async Task CargarLibros()
+    {
+        libros = await libroServices.ObtenerTodosAsync();
+    }
+
+    private async Task ConfirmarEliminar(int id)
+    {
+        await libroServices.EliminarAsync(id);
+        mensaje = "Libro ha sido eliminado.";
+        await CargarLibros();
+    }
+}

@@ -1,0 +1,10 @@
+# Compilacion e IDE
+bin/
+obj/
+.vs/
+.vscode/
+
+# Base de datos local
+*.db
+*.db-shm
+*.db-wal
