@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-    builder.Services.AddDbContext<LibrosDbContext>(options =>
+    builder.Services.AddDbContextFactory<LibrosDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConStr"]));
 
     builder.Services.AddScoped<LibroServices>();
