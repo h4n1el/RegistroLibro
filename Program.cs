@@ -11,7 +11,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
     builder.Services.AddDbContextFactory<LibrosDbContext>(options =>
-    options.UseSqlite(builder.Configuration["ConStr"]));
+    options.UseSqlServer(builder.Configuration["ConStr"]));
 
     builder.Services.AddScoped<LibroServices>();
     
