@@ -8,10 +8,7 @@ public class LibrosDbContext : DbContext
 
     public DbSet<Libro> Libros { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Libro>()
-            .HasIndex(l => l.Titulo)
-            .IsUnique();
-    }
+    public DbSet<Estudiante> Estudiantes {get; set;}
+
+   
 }
