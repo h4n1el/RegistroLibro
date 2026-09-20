@@ -14,6 +14,7 @@ builder.Services.AddRazorComponents()
     options.UseSqlServer(builder.Configuration["ConStr"]));
 
     builder.Services.AddScoped<LibroServices>();
+    builder.Services.AddScoped<EstudianteServices>();
     
     builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -23,7 +24,7 @@ builder.Services.AddRazorComponents()
     
 
 builder.Services.AddScoped<LibroRepository>();
-builder.Services.AddScoped<EstudianteServices>();
+
 
 var app = builder.Build();
 
