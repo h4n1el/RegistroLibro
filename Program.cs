@@ -22,7 +22,7 @@ builder.Services.AddRazorComponents()
 
     
 
-builder.Services.AddScoped<LibroRepository2, LibroRepository>();
+builder.Services.AddScoped<LibroRepository>();
 
 var app = builder.Build();
 
