@@ -1,7 +1,7 @@
-using RegistroLibros.Components;
-using RegistroLibros.DAL;
+using ResgistroEstudiante.Components;
+using RegistrosEstudiante.Context;
 using Microsoft.EntityFrameworkCore;
-using RegistroLibros.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,25 +9,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddDbContextFactory<BibliotecaDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ConStr")));
+  
 
-builder.Services.AddScoped<LibroRepository>();
-builder.Services.AddScoped<LibroServices>();
+var ConStr = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContextFactory<Contexto>(op => op.UseSqlServer(ConStr));
 
-builder.Services.AddScoped<EstudianteRepository>();
+
 builder.Services.AddScoped<EstudianteServices>();
 
 var app = builder.Build();
 
+
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    
     app.UseHsts();
 }
-
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
 app.UseAntiforgery();
+
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
