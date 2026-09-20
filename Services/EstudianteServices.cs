@@ -1,48 +1,40 @@
-using Microsoft.EntityFrameworkCore;
-using RegistroEstudiante.Models;
-using RegistrosEstudiante.Context;
+using RegistroLibros.DAL;
 
+namespace RegistroLibros.Services;
 
-
-public class EstudianteServices(IDbContextFactory<Contexto>  DbFactory)
+public class EstudianteServices
 {
-    public async Task<bool> Guardar(Estudiantes estudiantes)
+    private readonly EstudianteRepository _estudianteRepository;
+
+    public EstudianteServices(EstudianteRepository estudianteRepository)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        contexto.Estudiantes.Add(estudiantes);
-        return await contexto.SaveChangesAsync() > 0;
-        
+        _estudianteRepository = estudianteRepository;
     }
 
-    public async Task<bool> Existe(string nombre)
+    public async Task<List<Estudiante>> ObtenerTodosAsync()
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Estudiantes.AnyAsync(n => n.Nombre == nombre);
+        return await _estudianteRepository.Listar(e => e.EstudianteId > 0);
     }
 
-    public async Task<bool> Modificar(Estudiantes estudiantes)
+    public async Task<Estudiante?> ObtenerPorIdAsync(int id)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        contexto.Update(estudiantes);
-        return await contexto.SaveChangesAsync() > 0;
+        return await _estudianteRepository.Buscar(id);
     }
 
-    public async Task<bool> Eliminar(int EstudianteId)
+    public async Task<(bool Exito, string? Error)> Guardar(Estudiante estudiante)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Estudiantes.AsNoTracking().Where(e => e.EstudianteId == EstudianteId).ExecuteDeleteAsync() > 0;
+        var duplicado = await _estudianteRepository.ExisteNombre(estudiante.Nombres, estudiante.EstudianteId == 0 ? null : estudiante.EstudianteId);
+        if (duplicado)
+        {
+            return (false, "Ya existe un estudiante registrado con ese nombre.");
+        }
+
+        var exito = await _estudianteRepository.Guardar(estudiante);
+        return exito ? (true, null) : (false, "Error al guardar el estudiante.");
     }
 
-    public async Task<Estudiantes?> Buscar(int EstudianteId)
+    public async Task<bool> EliminarAsync(int id)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Estudiantes.FirstOrDefaultAsync(e => e.EstudianteId == EstudianteId);
+        return await _estudianteRepository.Eliminar(id);
     }
-
-    public async Task<List<Estudiantes>> ObtenerTodos()
-    {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Estudiantes.AsNoTracking().ToListAsync();
-    }
-    
 }
