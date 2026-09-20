@@ -1,23 +1,24 @@
 using System.ComponentModel.DataAnnotations;
-namespace RegistroEstudiante.Models;
 
-public class Estudiantes
+public class Estudiante
 {
     [Key]
-    [Required(ErrorMessage = "Este campo es obligatorio")]
-    public int EstudianteId {get; set;}
+    public int EstudianteId { get; set; }
 
-    [Required(ErrorMessage = "Este campo es obligatorio")]
-    public string? Nombre {get; set;}
+    [Required(ErrorMessage = "El nombre es obligatorio.")]
+    [MaxLength(100)]
+    public string Nombres { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Este campo es obligatorio")]
-    public string? Email {get; set;}
+    [Required(ErrorMessage = "La dirección es obligatoria.")]
+    [MaxLength(200)]
+    public string Direccion { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Este campo es obligatorio")]
-    public string? Direccion {get; set;}
+    [Required(ErrorMessage = "El email es obligatorio.")]
+    [EmailAddress(ErrorMessage = "Ingresa un email válido.")]
+    [MaxLength(150)]
+    public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Este campo es obligatorio")]
-    public int FechaNacimiento {get; set;}
-
-
+    [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
+    [DataType(DataType.Date)]
+    public DateTime FechaNacimiento { get; set; }
 }
