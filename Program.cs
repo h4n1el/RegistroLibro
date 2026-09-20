@@ -23,6 +23,7 @@ builder.Services.AddRazorComponents()
     
 
 builder.Services.AddScoped<LibroRepository>();
+builder.Services.AddScoped<EstudianteServices>();
 
 var app = builder.Build();
 
