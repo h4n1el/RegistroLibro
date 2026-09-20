@@ -1,0 +1,87 @@
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using RegistroLibros.Services
+
+@page "/Estudiante/Edit/{EstudianteId:int}"
+@inject EstudianteServices estudianteServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Editar Estudiante</PageTitle>
+
+<h3>Editar Estudiante</h3>
+
+@if (estudiante == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <EditForm Model="estudiante" OnValidSubmit="EditarEstudiante" FormName="EditarEstudiante">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nombres</label>
+            <InputText class="form-control" @bind-Value="estudiante.Nombres" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Dirección</label>
+            <InputText class="form-control" @bind-Value="estudiante.Direccion" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <InputText class="form-control" @bind-Value="estudiante.Email" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <InputDate class="form-control" @bind-Value="estudiante.FechaNacimiento" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
+        <button type="button" class="btn btn-secondary mt-3" @onclick="Cancelar">Cancelar</button>
+
+        @if (!string.IsNullOrEmpty(mensaje))
+        {
+            <p class="text-danger mt-2">@mensaje</p>
+        }
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int EstudianteId { get; set; }
+
+    private Estudiante? estudiante;
+    private string? mensaje;
+
+    protected override async Task OnInitializedAsync()
+    {
+        estudiante = await estudianteServices.ObtenerPorIdAsync(EstudianteId);
+    }
+
+    private async Task EditarEstudiante()
+    {
+        if (estudiante == null) return;
+
+        var (exito, error) = await estudianteServices.Guardar(estudiante);
+
+        if (exito)
+        {
+            navigationManager.NavigateTo("/Estudiante/Index");
+        }
+        else
+        {
+            mensaje = error;
+        }
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/Estudiante/Index");
+    }
+}
